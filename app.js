@@ -6,24 +6,37 @@ var gpio = require("pi-gpio");
 
 app.get('/on/:pin', function(req, res) {
   gpioPin = req.params.pin;
-	gpio.close(gpioPin);
+        gpio.close(gpioPin);
   gpio.open(gpioPin, "output", function(err) {
     gpio.write(gpioPin, 1, function() {
       console.log('Pin '+ gpioPin +' is now HIGH.');
-			res.sendStatus(200);
+                        res.sendStatus(200);
     });
   });
 });
 
 app.get('/off/:pin', function(req, res) {
   gpioPin = req.params.pin;
-	gpio.close(gpioPin);
+        gpio.close(gpioPin);
   gpio.open(gpioPin, "output", function(err) {
-		gpio.write(gpioPin, 0, function() {
-			console.log('Pin '+ gpioPin +' is now LOW.');
-			res.sendStatus(200);
-		});
+                gpio.write(gpioPin, 0, function() {
+                        console.log('Pin '+ gpioPin +' is now LOW.');
+                        res.sendStatus(200);
+                });
   });
+});
+
+app.get('/pin/:pin', function(req, res) {
+    gpioPin = req.params.pin;
+
+    gpio.close(gpioPin);
+    gpio.open(gpioPin, "input", function(err) {
+        gpio.read(gpioPin, function(err, value) {
+            console.log('Pin ' + gpioPin + ' has value: ' + value);     // The current state of the pin
+            res.set('Content-Type', 'text/plain');
+            res.send('' + value)
+        });
+    });
 });
 
 app.get('/blink/:pin/:time', function(req, res) {
